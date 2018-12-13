@@ -16,7 +16,7 @@ sinkfill <- function(DEM,res,degree) {
   ##  still to implement in R (using NA's)
 
   result <- .C("c_sinkfill",
-               PACKAGE = "topmodel",
+               PACKAGE = "newtopmodel",
                as.double(DEM),
                result = double(nrow*ncol + 2),
                as.integer(nrow),

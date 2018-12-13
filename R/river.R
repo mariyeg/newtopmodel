@@ -21,7 +21,7 @@ river <- function(DEM,atb,area,res,thatb,tharea) {
 
   ## calling the function
   result <- .C("findrivers",
-               PACKAGE = "topmodel",
+               PACKAGE = "newtopmodel",
                as.double(DEM),
                as.double(atb),
                as.double(area),

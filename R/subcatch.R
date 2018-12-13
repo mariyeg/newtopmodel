@@ -19,7 +19,7 @@ subcatch <- function(DEM,outlet) {
   ## calling the function
 
   result <- .C("c_subcatch",
-               PACKAGE = "topmodel",
+               PACKAGE = "newtopmodel",
                as.double(DEM),
                result = integer(nrow*ncol),
                as.integer(nrow),

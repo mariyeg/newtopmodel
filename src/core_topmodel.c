@@ -10,6 +10,12 @@ void run_topmodel(double *rain, double *ETp, int nidxclass, int i, int ntimestep
   int    j, k;
   double Aatb_r, _qo, _qv;
 
+  //MARILENA 
+  double poutcrop;
+  poutcrop = 0.18;
+  double pevaoutcrop;
+  pevaoutcrop = 0.5;
+  
   /* initialise the fluxes */
 
   misc.qt[i][nidxclass] = 0.0;
@@ -17,16 +23,16 @@ void run_topmodel(double *rain, double *ETp, int nidxclass, int i, int ntimestep
   misc.qv[i][nidxclass] = 0.0;
   misc.Ea[i][nidxclass] = 0.0;
   misc.qs[i] = 0.0;
-  misc.f[i] = rain[i];               /* By default all rain infiltrates */
+  misc.f[i] = (1-poutcrop)*rain[i];               /* By default all rain infiltrates */
   misc.fex[i] = 0.0;                 /* and therefore fex is zero */
 
   /* calculate infiltration and redirect any excess infiltration to fex */
 
-  misc.f[i] = params.dt * get_f((i + 1) * params.dt, rain[i] / params.dt,
+  misc.f[i] = params.dt * get_f((i + 1) * params.dt, (1-poutcrop)*rain[i] / params.dt,
 				  params.CD, params.K0, params.m, params.dt);
-  if(misc.f[i]<0) misc.f[i] = rain[i];
+  if(misc.f[i]<0) misc.f[i] = (1-poutcrop)* rain[i];
   /* necessary? -> yes! but would be good to find out why ...*/
-  misc.fex[i] = rain[i] - misc.f[i];
+  misc.fex[i] = ((1-poutcrop)* rain[i]) - misc.f[i];
 
   /* Srz = Root zone storage deficit
      Suz = Unsaturated (gravity drainage) zone storage */
@@ -146,7 +152,9 @@ void run_topmodel(double *rain, double *ETp, int nidxclass, int i, int ntimestep
      The relative area only comes into play at last step.
      fex is independent on the nidxclass, as is qs */
 
-  misc.qo[i][nidxclass] += misc.fex[i];
+  //misc.qo[i][nidxclass] += misc.fex[i];
+  //MARILENA
+  misc.qo[i][nidxclass] = misc.qo[i][nidxclass] + misc.fex[i] + (poutcrop * pevaoutcrop) * rain[i];
   misc.qt[i][nidxclass] = misc.qo[i][nidxclass] + misc.qs[i];
 
 

@@ -41,7 +41,7 @@ topmodel <- function(parameters, topidx, delay, rain, ETp, verbose = F, Qobs = N
   ## running the model...
 
   result <- .C("c_topmodel",
-               PACKAGE = "topmodel",
+               PACKAGE = "newtopmodel",
                as.double(t(parameters)),
                as.double(as.matrix(topidx)),
                as.double(as.matrix(delay)),

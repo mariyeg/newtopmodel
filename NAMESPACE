@@ -1,4 +1,4 @@
-useDynLib(topmodel, .registration = TRUE)
+useDynLib(newtopmodel, .registration = TRUE)
 
 importFrom("methods", "is")
 

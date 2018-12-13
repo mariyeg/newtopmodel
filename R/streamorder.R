@@ -8,7 +8,7 @@ ncol <- dim(dem)[2]
 # calling the function
 
   result <- .C("c_streamorder",
-		PACKAGE = "topmodel",
+		PACKAGE = "newtopmodel",
 		as.double(dem),
 		result = double(nrow*ncol),
 		as.integer(nrow),
