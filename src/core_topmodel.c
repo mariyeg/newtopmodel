@@ -1,8 +1,6 @@
 
 
 
-
-
 #include "topmodel.h"
 
 void run_topmodel(double *rain, double *ETp, int nidxclass, int i, int ntimestep)
@@ -11,8 +9,8 @@ void run_topmodel(double *rain, double *ETp, int nidxclass, int i, int ntimestep
   double Aatb_r, _qo, _qv;
 
   //MARILENA 
-  double poutcropd;
-  poutcropd = 0.09;   //afloramientos rocosos directos a la red de drenaje
+  double poutcrop;
+  poutcrop = 0.02;   //0.05, 0.07, 0.03, 0.06 área de afloramientos rocosos 
  
   
   /* initialise the fluxes */
@@ -22,16 +20,25 @@ void run_topmodel(double *rain, double *ETp, int nidxclass, int i, int ntimestep
   misc.qv[i][nidxclass] = 0.0;
   misc.Ea[i][nidxclass] = 0.0;
   misc.qs[i] = 0.0;
-  misc.f[i] = (1-poutcropd)*rain[i];   /* By default all rain infiltrates */
+  misc.f[i] = rain[i];   /* By default all rain infiltrates */
   misc.fex[i] = 0.0;                 /* and therefore fex is zero */
 
   /* calculate infiltration and redirect any excess infiltration to fex */
 
-  misc.f[i] = params.dt * get_f((i + 1) * params.dt, (1-poutcropd)*rain[i] / params.dt,
+  misc.f[i] = params.dt * get_f((i + 1) * params.dt, rain[i] / params.dt,
 				  params.CD, params.K0, params.m, params.dt);
-  if(misc.f[i]<0) misc.f[i] = (1-poutcropd)* rain[i];
+  if(misc.f[i]<0) misc.f[i] = rain[i];
   /* necessary? -> yes! but would be good to find out why ...*/
-  misc.fex[i] = ((1-poutcropd)* rain[i]) - misc.f[i];
+  //MARILENA
+  if(misc.f[i] > poutcrop * rain[i])
+     misc.f[i] = misc.f[i] -  poutcrop * rain[i];
+  else
+    misc.f[i] =0;
+  
+  
+  
+  
+  misc.fex[i] = rain[i] - misc.f[i];
 
   /* Srz = Root zone storage deficit
      Suz = Unsaturated (gravity drainage) zone storage */
@@ -44,7 +51,12 @@ void run_topmodel(double *rain, double *ETp, int nidxclass, int i, int ntimestep
   }
 
   misc.qs[i] = misc.qss * exp(- misc.S_mean[i] / params.m);	/* eq. 6.33 */
-
+  //MARILENA
+  //if(misc.qs[i] > poutcrop * rain[i])
+  //   misc.qs[i] = misc.qs[i] -  poutcrop * rain[i];
+  //else
+  //  misc.qs[i] =0;
+  
 /* qs = Subsurface flow per unit area
    qss = saturated zone flow = exp(-gamma) = exp(lnTe-lambda) */
 
@@ -153,7 +165,7 @@ void run_topmodel(double *rain, double *ETp, int nidxclass, int i, int ntimestep
 
   //misc.qo[i][nidxclass] += misc.fex[i];
   //MARILENA
-  misc.qo[i][nidxclass] = misc.qo[i][nidxclass] + misc.fex[i] + poutcropd * rain[i];
+  misc.qo[i][nidxclass] = misc.qo[i][nidxclass] + misc.fex[i];  //MARILENA + poutcrop * rain[i]
   misc.qt[i][nidxclass] = misc.qo[i][nidxclass] + misc.qs[i];
 
 
