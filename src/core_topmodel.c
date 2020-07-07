@@ -10,7 +10,7 @@ void run_topmodel(double *rain, double *ETp, int nidxclass, int i, int ntimestep
 
   //MARILENA 
   double poutcrop;
-  poutcrop = 0.02;   //0.05, 0.07, 0.03, 0.06 área de afloramientos rocosos 
+  poutcrop = 0.05;   //0.05, 0.07, 0.03, 0.06 área de afloramientos rocosos 
  
   
   /* initialise the fluxes */
@@ -30,16 +30,16 @@ void run_topmodel(double *rain, double *ETp, int nidxclass, int i, int ntimestep
   if(misc.f[i]<0) misc.f[i] = rain[i];
   /* necessary? -> yes! but would be good to find out why ...*/
   //MARILENA
+  
   if(misc.f[i] > poutcrop * rain[i])
      misc.f[i] = misc.f[i] -  poutcrop * rain[i];
   else
     misc.f[i] =0;
   
   
-  
-  
-  misc.fex[i] = rain[i] - misc.f[i];
+   misc.fex[i] = rain[i] - misc.f[i];
 
+  
   /* Srz = Root zone storage deficit
      Suz = Unsaturated (gravity drainage) zone storage */
 
